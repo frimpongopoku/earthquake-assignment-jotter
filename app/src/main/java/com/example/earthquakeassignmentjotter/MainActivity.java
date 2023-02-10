@@ -19,14 +19,23 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+
 public class MainActivity extends AppCompatActivity{
 
-
+    CustomXMLHandler xmlHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new InternetExplorer().execute();
+        InternetExplorer task = (InternetExplorer) new InternetExplorer().execute();
+        task.onComplete = new AfterEffect() {
+            @Override
+            public void sendResponse(String response) {
+                xmlHandler = new CustomXMLHandler(response);
+//                Log.d("PRINTING AGAIN","YOU KNOW, THIS IS WHERE THE THING ACTUALLY HAPPENS");
+//                Log.d("PRINTING AGAIN",response);
+            }
+        };
 
 
 

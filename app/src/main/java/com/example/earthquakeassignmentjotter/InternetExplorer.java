@@ -14,6 +14,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class InternetExplorer extends AsyncTask {
+    public AfterEffect onComplete;
+    public InternetExplorer(){
+        this.onComplete = onComplete;
+    }
+
     @Override
     protected Object doInBackground(Object[] objects) {
         HttpURLConnection urlConnection = null;
@@ -35,8 +40,9 @@ public class InternetExplorer extends AsyncTask {
             while ((line = rd.readLine()) != null) {
                 sb.append(line).append("\n");
             }
-            Log.d("PRINTING", sb.toString());
 
+//            Log.d("PRINTING", sb.toString());
+            return sb.toString();
 //            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 //            XmlPullParser parser = factory.newPullParser();
 //            parser.setInput( urlConnection.getInputStream(),"UTF-8");
@@ -75,4 +81,9 @@ public class InternetExplorer extends AsyncTask {
         return null;
     }
 
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        onComplete.sendResponse(String.valueOf(o));
+    }
 }
