@@ -60,4 +60,17 @@ public class EarthquakeChannel {
     public void setItems(ArrayList<EarthquakeItem> items) {
         this.items = items;
     }
+
+    @Override
+    public String toString() {
+        String items ="";
+
+        for(int i = 0; i < items.length(); i++){
+            EarthquakeItem itm = this.items.get(i);
+            if(i != 0) items +="\n-------------------------------\n";
+            items +=itm.toString();
+        }
+
+        return items;
+    }
 }

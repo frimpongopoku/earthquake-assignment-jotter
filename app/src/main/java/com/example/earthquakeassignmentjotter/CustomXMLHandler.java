@@ -12,85 +12,68 @@ import java.io.StringReader;
 public class CustomXMLHandler {
     private String xmlString;
     private EarthquakeChannel channel = new EarthquakeChannel();
-
+    private String TAG = "PRINTING";
     public CustomXMLHandler(String xmlString){
         this.xmlString = xmlString;
         this.process();
     }
 
     public void process () {
-        XmlPullParserFactory factory = null;
+        if( this.xmlString == null) {
+            Log.d(TAG,"XML String is Empty....");
+            return;
+        }
+//        Log.d(TAG,xmlString);
+
+
         try {
-            int tracker = 0 ;
-            factory = XmlPullParserFactory.newInstance();
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             XmlPullParser parser = factory.newPullParser();
             parser.setInput( new StringReader(this.xmlString));
+
+
             int eventType = parser.getEventType();
-            while(eventType != XmlPullParser.END_DOCUMENT){
-                if(eventType == XmlPullParser.START_TAG){
-                    String name = parser.getName();
-                    String value = parser.nextText();
-                    EarthquakeItem earth = new EarthquakeItem();
-                    switch (name){
-                        case "item":
-                            earth = new EarthquakeItem();
-                        case "title":
-                            if(tracker == 0) channel.setTitle(value);
-                            else earth.setTitle(value);
-                        case "link":
-                            if(tracker == 0) channel.setLink(value);
-                        case "description":
-                            if(tracker == 0) channel.setDescription(value);
-                            else earth.setDescription(value);
-                        case "language":
-                            if(tracker == 0) channel.setLanguage(value);
-                        case "lastBuildDate":
-                            if(tracker == 0) channel.setBuildDate(value);
-                        case "pubDate":
-                            earth.setPubDate(value);
-                        case "category":
-                            earth.setCategory(value);
-                        case "geo:lat":
-                            earth.setLatitude(Double.valueOf(value));
-                        case "geo:long":
-                            earth.setLongitude(Double.valueOf(value));
+            // Traverse through the XML document
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG && parser.getName().equalsIgnoreCase("item")) {
+                    String title = "";
+                    String description = "";
+                    String pubDate = "";
+                    String link = "";
+
+                    while (eventType != XmlPullParser.END_TAG || !parser.getName().equalsIgnoreCase("item")) {
+                        if (eventType == XmlPullParser.START_TAG) {
+                            switch (parser.getName().toLowerCase()) {
+                                case "title":
+                                    title = parser.nextText();
+                                    break;
+                                case "description":
+                                    description = parser.nextText();
+                                    break;
+                                case "pubdate":
+                                    pubDate = parser.nextText();
+                                    break;
+                                case "link":
+                                    link = parser.nextText();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        eventType = parser.next();
                     }
 
-                    if(eventType == XmlPullParser.END_TAG){
-                        if (name.equals("lastBuildDate")) tracker+=1;
-                        else if (name.equals("item")) channel.addItem(earth);
-                    }
-
-
-                    Log.d("PRINTING", String.valueOf(eventType));
-                    Log.d("PRINTING", name);
-
-
-
-
-
-//                    if(parser.getName().equals("title")){
-//                        Log.d("PRINTING", parser.nextText());
-//                    }else if(parser.getName().equals("description")){
-//                        Log.d("PRINTING", parser.nextText());
-//                    }else if(parser.getName().equals("link")){
-//                        Log.d("PRINTING", parser.nextText());
-//                    }else if(parser.getName().equals("pubDate")){
-//                        Log.d("PRINTING", parser.nextText());
-//                    }else if(parser.getName().equals("category")){
-//                        Log.d("PRINTING", parser.nextText());
-//                    }else if(parser.getName().equals("geo:lat")){
-//                        Log.d("PRINTING", parser.nextText());
-//                    }else if(parser.getName().equals("geo:long")){
-//                        Log.d("PRINTING", parser.nextText());
-//                    }
-
+                    System.out.println("Title: " + title);
+                    System.out.println("Description: " + description);
+                    System.out.println("PubDate: " + pubDate);
+                    System.out.println("Link: " + link);
+                    System.out.println("----------------------------");
                 }
                 eventType = parser.next();
-
             }
         } catch (XmlPullParserException | IOException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            Log.d("PRINTING ERROR HERE", e.toString());
         }
     }
 

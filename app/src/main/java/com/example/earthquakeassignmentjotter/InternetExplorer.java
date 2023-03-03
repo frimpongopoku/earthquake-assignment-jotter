@@ -84,6 +84,7 @@ public class InternetExplorer extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        onComplete.sendResponse(String.valueOf(o));
+        if (o== null) onComplete.sendResponse(null);
+        else onComplete.sendResponse(String.valueOf(o));
     }
 }
